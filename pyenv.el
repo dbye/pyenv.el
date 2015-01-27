@@ -6,7 +6,7 @@
 ;; Author: Yves Senn <yves.senn@gmail.com>
 ;; Version: 0.0.3
 ;; Created: 10 February 2013
-;; Keywords: ruby rbenv
+;; Keywords: python rbenv
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -32,9 +32,9 @@
 ;; M-x global-rbenv-mode toggle the configuration done by rbenv.el
 
 ;; M-x rbenv-use-global prepares the current Emacs session to use
-;; the global ruby configured with rbenv.
+;; the global python configured with rbenv.
 
-;; M-x rbenv-use allows you to switch the current session to the ruby
+;; M-x rbenv-use allows you to switch the current session to the python
 ;; implementation of your choice.
 
 ;;; Compiler support:
@@ -57,8 +57,8 @@
   :group 'rbenv
   :type 'function)
 
-(defcustom rbenv-show-active-ruby-in-modeline t
-  "Toggles wether rbenv-mode shows the active ruby in the modeline."
+(defcustom rbenv-show-active-python-in-modeline t
+  "Toggles wether rbenv-mode shows the active python in the modeline."
   :group 'rbenv
   :type 'boolean)
 
@@ -70,8 +70,8 @@
 (defvar rbenv-executable (rbenv--expand-path "bin" "rbenv")
   "path to the rbenv executable")
   
-(defvar rbenv-ruby-shim (rbenv--expand-path "shims" "ruby")
-  "path to the ruby shim executable")
+(defvar rbenv-python-shim (rbenv--expand-path "shims" "python")
+  "path to the python shim executable")
 
 (defvar rbenv-global-version-file (rbenv--expand-path "version")
   "path to the global version configuration file of rbenv")
@@ -83,9 +83,9 @@
                                  (cons 'bin-path (rbenv--expand-path "bin")))
   "these are added to PATH and exec-path when rbenv is setup")
 
-(defface rbenv-active-ruby-face
+(defface rbenv-active-python-face
   '((t (:weight bold :foreground "Red")))
-  "The face used to highlight the current ruby on the modeline.")
+  "The face used to highlight the current python on the modeline.")
 
 (defvar rbenv--initialized nil
   "indicates if the current Emacs session has been configured to use rbenv")
@@ -96,27 +96,27 @@
 
 ;;;###autoload
 (defun rbenv-use-global ()
-  "activate rbenv global ruby"
+  "activate rbenv global python"
   (interactive)
-  (rbenv-use (rbenv--global-ruby-version)))
+  (rbenv-use (rbenv--global-python-version)))
 
 ;;;###autoload
 (defun rbenv-use-corresponding ()
-  "search for .ruby-version and activate the corresponding ruby"
+  "search for .python-version and activate the corresponding python"
   (interactive)
-  (let ((version-file-path (or (rbenv--locate-file ".ruby-version")
+  (let ((version-file-path (or (rbenv--locate-file ".python-version")
                                (rbenv--locate-file ".rbenv-version"))))
     (if version-file-path (rbenv-use (rbenv--read-version-from-file version-file-path))
-      (message "[rbenv] could not locate .ruby-version or .rbenv-version"))))
+      (message "[rbenv] could not locate .python-version or .rbenv-version"))))
 
 ;;;###autoload
-(defun rbenv-use (ruby-version)
-  "choose what ruby you want to activate"
+(defun rbenv-use (python-version)
+  "choose what python you want to activate"
   (interactive
-   (let ((picked-ruby (rbenv--completing-read "Ruby version: " (rbenv/list))))
-     (list picked-ruby)))
-  (rbenv--activate ruby-version)
-  (message (concat "[rbenv] using " ruby-version)))
+   (let ((picked-python (rbenv--completing-read "Ruby version: " (rbenv/list))))
+     (list picked-python)))
+  (rbenv--activate python-version)
+  (message (concat "[rbenv] using " python-version)))
 
 (defun rbenv/list ()
   (append '("system")
@@ -141,14 +141,14 @@
     (setq eshell-path-env (getenv "PATH"))
     (setq rbenv--initialized nil)))
 
-(defun rbenv--activate (ruby-version)
-  (setenv rbenv-version-environment-variable ruby-version)
+(defun rbenv--activate (python-version)
+  (setenv rbenv-version-environment-variable python-version)
   (rbenv--update-mode-line))
 
 (defun rbenv--completing-read (prompt options)
   (funcall rbenv-interactive-completion-function prompt options))
 
-(defun rbenv--global-ruby-version ()
+(defun rbenv--global-python-version ()
   (if (file-exists-p rbenv-global-version-file)
       (rbenv--read-version-from-file rbenv-global-version-file)
     "system"))
@@ -179,26 +179,26 @@
 
 (defun rbenv--update-mode-line ()
   (setq rbenv--modestring (funcall rbenv-modeline-function
-                                   (rbenv--active-ruby-version))))
+                                   (rbenv--active-python-version))))
 
-(defun rbenv--modeline-with-face (current-ruby)
+(defun rbenv--modeline-with-face (current-python)
   (append '(" [")
-          (list (propertize current-ruby 'face 'rbenv-active-ruby-face))
+          (list (propertize current-python 'face 'rbenv-active-python-face))
           '("]")))
 
-(defun rbenv--modeline-plain (current-ruby)
-  (list " [" current-ruby "]"))
+(defun rbenv--modeline-plain (current-python)
+  (list " [" current-python "]"))
 
-(defun rbenv--active-ruby-version ()
-  (or (getenv rbenv-version-environment-variable) (rbenv--global-ruby-version)))
+(defun rbenv--active-python-version ()
+  (or (getenv rbenv-version-environment-variable) (rbenv--global-python-version)))
 
 ;;;###autoload
 (define-minor-mode global-rbenv-mode
-  "use rbenv to configure the ruby version used by your Emacs."
+  "use rbenv to configure the python version used by your Emacs."
   :global t
   (if global-rbenv-mode
       (progn
-        (when rbenv-show-active-ruby-in-modeline
+        (when rbenv-show-active-python-in-modeline
           (unless (memq 'rbenv--modestring global-mode-string)
             (setq global-mode-string (append (or global-mode-string '(""))
                                              '(rbenv--modestring)))))
