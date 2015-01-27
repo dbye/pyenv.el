@@ -5,12 +5,12 @@ use pyenv to manage your Python versions within Emacs
 
 
 Note
-====
+----
 
 This pyenv is forked from
-[senny/rbenv](https://github.com/senny/rbenv.el), and is not a fork of
+[senny/rbenv.el](https://github.com/senny/rbenv.el), and is not a fork of
 the MELPA package of the same name. As such, its configuration and use
-are exactly the same as rbenv.
+are exactly the same as senny/rbenv.el.
 
 
 
